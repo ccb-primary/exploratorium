@@ -439,19 +439,31 @@
     }
 
     function performLogin(e) {
-      e.preventDefault();
-      const u = document.getElementById('loginUsername').value.trim();
-      const p = document.getElementById('loginPassword').value.trim();
+  e.preventDefault();
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value.trim();
 
-      const found = users.find(user => user.username.toLowerCase() === u.toLowerCase() && user.pass === p);
-      if (!found) return alert('Invalid username or password!');
+  db.ref('users').get().then(snapshot => {
+    const liveUsers = snapshot.val() || [];
+    const userArray = Array.isArray(liveUsers) ? liveUsers : Object.values(liveUsers);
+    
+    const found = userArray.find(user => 
+      user && user.username && user.username.toLowerCase() === u.toLowerCase() && user.pass === p
+    );
 
+    if (found) {
       currentUser = found;
       closeAuthModal();
-      document.getElementById('loginPassword').value = '';
       renderHeader();
       renderGrid();
+    } else {
+      alert('Invalid username or password.');
     }
+  }).catch(err => {
+    console.error(err);
+    alert('Error connecting to database.');
+  });
+}
 
     function performRegister(e) {
   e.preventDefault();
