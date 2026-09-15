@@ -465,15 +465,41 @@
   });
 }
 
-    function performRegister(e) {
+   function performRegister(e) {
   e.preventDefault();
   const fullName = document.getElementById('regFullName').value.trim();
   const u = document.getElementById('regUsername').value.trim();
   const p = document.getElementById('regPassword').value.trim();
 
-  if (users.find(user => user.username.toLowerCase() === u.toLowerCase())) {
-    return alert('Username already exists. Please choose another.');
-  }
+  const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
+
+  db.ref('users').get().then(snapshot => {
+    let currentUsers = snapshot.val() || [];
+    if (!Array.isArray(currentUsers)) {
+      currentUsers = Object.values(currentUsers);
+    }
+
+    const exists = currentUsers.some(user => 
+      user && user.username && user.username.toLowerCase() === u.toLowerCase()
+    );
+
+    if (exists) {
+      alert('Username already exists. Please choose another.');
+      return;
+    }
+
+    currentUsers.push(newUser);
+    return db.ref('users').set(currentUsers);
+  }).then(() => {
+    currentUser = newUser;
+    closeAuthModal();
+    renderHeader();
+    renderGrid();
+  }).catch(err => {
+    console.error(err);
+    alert('Error registering account.');
+  });
+}
 
   const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
   
