@@ -454,25 +454,32 @@
     }
 
     function performRegister(e) {
-      e.preventDefault();
-      const fullName = document.getElementById('regFullName').value.trim();
-      const u = document.getElementById('regUsername').value.trim();
-      const p = document.getElementById('regPassword').value.trim();
+  e.preventDefault();
+  const fullName = document.getElementById('regFullName').value.trim();
+  const u = document.getElementById('regUsername').value.trim();
+  const p = document.getElementById('regPassword').value.trim();
 
-      if (users.find(user => user.username.toLowerCase() === u.toLowerCase())) {
-        return alert('Username already exists. Please choose another.');
-      }
+  if (users.find(user => user.username.toLowerCase() === u.toLowerCase())) {
+    return alert('Username already exists. Please choose another.');
+  }
 
-      const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
-      users.push(newUser);
-      localStorage.setItem('room_users', JSON.stringify(users));
-
-      currentUser = newUser;
-      closeAuthModal();
-      alert(`Account created successfully! Welcome, ${fullName}.`);
-      renderHeader();
-      renderGrid();
-    }
+  const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
+  
+  // Push directly to Firebase first to guarantee sync across devices
+  db.ref('users').get().then((snapshot) => {
+    let currentUsers = snapshot.val() || [];
+    currentUsers.push(newUser);
+    return db.ref('users').set(currentUsers);
+  }).then(() => {
+    currentUser = newUser;
+    closeAuthModal();
+    alert(`Account created successfully! Welcome, ${fullName}.`);
+    renderHeader();
+    renderGrid();
+  }).catch((err) => {
+    alert('Registration error. Please check your internet connection.');
+  });
+}
 
     function toggleAdminModal() {
       const modal = document.getElementById('adminModal');
