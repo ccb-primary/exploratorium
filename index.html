@@ -199,6 +199,13 @@
   </div>
 
   <script>
+    const firebaseConfig = {
+  databaseURL: "YOUR_FIREBASE_DATABASE_URL_HERE"
+};
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
     const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     
     let defaultPeriods = [
