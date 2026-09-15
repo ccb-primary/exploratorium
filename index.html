@@ -438,7 +438,7 @@
       }
     }
 
-    function performLogin(e) {
+ function performLogin(e) {
   e.preventDefault();
   const u = document.getElementById('loginUsername').value.trim();
   const p = document.getElementById('loginPassword').value.trim();
@@ -465,7 +465,7 @@
   });
 }
 
-   function performRegister(e) {
+function performRegister(e) {
   e.preventDefault();
   const fullName = document.getElementById('regFullName').value.trim();
   const u = document.getElementById('regUsername').value.trim();
@@ -500,24 +500,7 @@
     alert('Error registering account.');
   });
 }
-
-  const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
   
-  // Push directly to Firebase first to guarantee sync across devices
-  db.ref('users').get().then((snapshot) => {
-    let currentUsers = snapshot.val() || [];
-    currentUsers.push(newUser);
-    return db.ref('users').set(currentUsers);
-  }).then(() => {
-    currentUser = newUser;
-    closeAuthModal();
-    alert(`Account created successfully! Welcome, ${fullName}.`);
-    renderHeader();
-    renderGrid();
-  }).catch((err) => {
-    alert('Registration error. Please check your internet connection.');
-  });
-}
 
     function toggleAdminModal() {
       const modal = document.getElementById('adminModal');
