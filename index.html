@@ -564,8 +564,8 @@ function performRegister(e) {
           ${u.role !== 'Admin' ? `<button onclick="deleteUserAccount('${u.username}')" class="text-red-500 font-semibold hover:underline">Delete Account</button>` : ''}
         </div>
       </div>
-    `).join('');
-  }).catch(err => {
+   `).join('');
+  }).catch((err => {
     console.error("Error rendering users from Firebase:", err);
   });
 }
