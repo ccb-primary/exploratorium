@@ -229,7 +229,7 @@
     let currentUser = null;
     let selectedSlot = null;
 
-    let bookings = JSON.parse(localStorage.getItem('room_bookings') || '{}');
+    let bookings = {};
     let holidays = JSON.parse(localStorage.getItem('room_holidays') || '[]');
     let adminSettings = JSON.parse(localStorage.getItem('room_admin_settings') || '{"termStart":"2026-08-15","termEnd":"2027-06-15"}');
     
@@ -682,7 +682,6 @@ function addPeriod(e) {
     }
 
 // Real-time Firebase Booking Sync across all devices
-bookings = {};
 db.ref('bookings').on('value', (snapshot) => {
   bookings = snapshot.val() || {};
   renderHeader();
