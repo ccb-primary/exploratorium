@@ -524,43 +524,51 @@ function performRegister(e) {
     }
 
     function renderAdminPanel() {
-      // Render Periods
-      const pList = document.getElementById('periodsList');
-      pList.innerHTML = periods.map((p, index) => `
-        <div class="flex justify-between items-center bg-white p-2 rounded border">
-          <div>
-            <strong>${p.name}</strong> <span class="text-slate-500">(${p.start} - ${p.end})</span>
-            <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-indigo-50 text-indigo-700">${p.day}</span>
-          </div>
-          <button onclick="deletePeriod(${index})" class="text-red-500 font-semibold hover:underline">Remove</button>
-        </div>
-      `).join('');
+  // Render Periods
+  const pList = document.getElementById('periodsList');
+  pList.innerHTML = periods.map((p, index) => `
+    <div class="flex justify-between items-center bg-white p-2 rounded border">
+      <div>
+        <strong>${p.name}</strong> <span class="text-slate-500">(${p.start} - ${p.end})</span>
+        <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-indigo-50 text-indigo-700">${p.day}</span>
+      </div>
+      <button onclick="deletePeriod(${index})" class="text-red-500 font-semibold hover:underline">Remove</button>
+    </div>
+  `).join('');
 
-      // Render Holidays
-      const holList = document.getElementById('holidayList');
-      holList.innerHTML = holidays.length === 0 ? '<p class="text-slate-400 italic">No blackout days configured.</p>' :
-        holidays.map((h, index) => `
-          <div class="flex justify-between items-center bg-white p-2 rounded border">
-            <div><strong>${h.name}</strong> (${h.start} to ${h.end})</div>
-            <button onclick="deleteHoliday(${index})" class="text-red-500 font-bold hover:underline">Remove</button>
-          </div>
-        `).join('');
+  // Render Holidays
+  const holList = document.getElementById('holidayList');
+  holList.innerHTML = holidays.length === 0 ? '<p class="text-slate-400 italic">No blackout days configured.</p>' :
+    holidays.map((h, index) => `
+      <div class="flex justify-between items-center bg-white p-2 rounded border">
+        <div><strong>${h.name}</strong> (${h.start} to ${h.end})</div>
+        <button onclick="deleteHoliday(${index})" class="text-red-500 font-bold hover:underline">Remove</button>
+      </div>
+    `).join('');
 
-      // Render Users
-      const uList = document.getElementById('userList');
-      uList.innerHTML = users.map((u, index) => `
-        <div class="flex justify-between items-center bg-white p-2 rounded border">
-          <div>
-            <strong>${u.name}</strong> <span class="text-slate-400">(@${u.username})</span>
-            <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${u.role}</span>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="resetPassword(${index})" class="text-indigo-600 font-semibold hover:underline">Reset Password</button>
-            ${u.role !== 'Admin' ? `<button onclick="deleteUserAccount(${index})" class="text-red-500 font-semibold hover:underline">Delete Account</button>` : ''}
-          </div>
+  // Render Users directly from Firebase Realtime Database
+  const ulist = document.getElementById('userList');
+  db.ref('users').get().then((snapshot) => {
+    const val = snapshot.val() || {};
+    // Handle both Firebase Object formats and legacy arrays safely
+    const userListArray = Array.isArray(val) ? val : Object.values(val);
+
+    ulist.innerHTML = userListArray.map((u) => `
+      <div class="flex justify-between items-center bg-white p-2 rounded border">
+        <div>
+          <strong>${u.name}</strong> <span class="text-slate-400">(${u.username})</span>
+          <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${u.role}</span>
         </div>
-      `).join('');
-    }
+        <div class="flex gap-2">
+          <button onclick="resetPassword('${u.username}')" class="text-indigo-600 font-semibold hover:underline">Reset Password</button>
+          ${u.role !== 'Admin' ? `<button onclick="deleteUserAccount('${u.username}')" class="text-red-500 font-semibold hover:underline">Delete Account</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }).catch(err => {
+    console.error("Error rendering users from Firebase:", err);
+  });
+}
 
     function addPeriod(e) {
       e.preventDefault();
@@ -654,14 +662,23 @@ function performRegister(e) {
       renderGrid();
     }
 
-    function resetPassword(index) {
-      const newPass = prompt(`Enter new password for ${users[index].name}:`);
-      if (newPass) {
-        users[index].pass = newPass;
-        localStorage.setItem('room_users', JSON.stringify(users));
-        alert('Password updated successfully!');
-      }
+   function resetPassword(username) {
+  const newPass = prompt(`Enter new password for ${username}:`);
+  if (!newPass || !newPass.trim()) return;
+
+  db.ref('users/' + username).update({
+    pass: newPass.trim()
+  }).then(() => {
+    alert(`Password for ${username} updated successfully!`);
+    
+    if (currentUser && currentUser.username === username) {
+      currentUser.pass = newPass.trim();
     }
+  }).catch((err) => {
+    console.error("Failed to reset password:", err);
+    alert('Failed to reset password: ' + err.message);
+  });
+
 
     function saveAdminSettings() {
       adminSettings.termStart = document.getElementById('adminTermStart').value;
