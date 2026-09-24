@@ -681,8 +681,8 @@ function addPeriod(e) {
       localStorage.setItem('room_admin_settings', JSON.stringify(adminSettings));
     }
 
-    // Real-time Firebase Booking Sync across all devices
-let bookings = {};
+// Real-time Firebase Booking Sync across all devices
+bookings = {};
 db.ref('bookings').on('value', (snapshot) => {
   bookings = snapshot.val() || {};
   renderHeader();
@@ -690,6 +690,8 @@ db.ref('bookings').on('value', (snapshot) => {
 });
 
 init();
+
+
   </script>
 </body>
 </html>
