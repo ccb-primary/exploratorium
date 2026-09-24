@@ -482,33 +482,33 @@ function performRegister(e) {
   const u = document.getElementById('regUsername').value.trim();
   const p = document.getElementById('regPassword').value.trim();
 
-  const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
+  if (!u || !p || !fullName) {
+    alert('Please fill out all fields.');
+    return;
+  }
 
-  db.ref('users').get().then(snapshot => {
-    let currentUsers = snapshot.val() || [];
-    if (!Array.isArray(currentUsers)) {
-      currentUsers = Object.values(currentUsers);
-    }
+  const userRef = db.ref('users/' + u);
 
-    const exists = currentUsers.some(user => 
-      user && user.username && user.username.toLowerCase() === u.toLowerCase()
-    );
-
-    if (exists) {
+  // Check if user already exists in Firebase
+  userRef.get().then((snapshot) => {
+    if (snapshot.exists()) {
       alert('Username already exists. Please choose another.');
       return;
     }
 
-    currentUsers.push(newUser);
-    return db.ref('users').set(currentUsers);
-  }).then(() => {
-    currentUser = newUser;
-    closeAuthModal();
-    renderHeader();
-    renderGrid();
-  }).catch(err => {
-    console.error(err);
-    alert('Error registering account.');
+    const newUser = { name: fullName, username: u, pass: p, role: 'Teacher' };
+
+    // Save directly to the cloud
+    return userRef.set(newUser).then(() => {
+      currentUser = newUser;
+      closeAuthModal();
+      renderHeader();
+      renderGrid();
+      alert('Account created successfully!');
+    });
+  }).catch((err) => {
+    console.error("Firebase registration error:", err);
+    alert('Error registering account: ' + err.message);
   });
 }
   
