@@ -688,6 +688,19 @@ db.ref('bookings').on('value', (snapshot) => {
   renderGrid();
 });
 
+// Real-time Firebase Users Sync across all devices
+db.ref('users').on('value', (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    users = Array.isArray(data)
+      ? data.filter(Boolean)
+      : Object.keys(data).map(key => ({ username: key, ...data[key] }));
+  } else {
+    users = [];
+  }
+  if (typeof renderAdminPanel === 'function') renderAdminPanel();
+});
+
 init();
 
 
