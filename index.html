@@ -698,9 +698,16 @@ db.ref('users').on('value', (snapshot) => {
   } else {
     users = [];
   }
+
+  // Refresh active currentUser session automatically
+  if (currentUser) {
+    const updatedUser = users.find(u => u.username === currentUser.username);
+    if (updatedUser) currentUser = updatedUser;
+  }
+
+  if (typeof renderHeader === 'function') renderHeader();
   if (typeof renderAdminPanel === 'function') renderAdminPanel();
 });
-
 init();
 
 
