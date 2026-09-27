@@ -725,27 +725,25 @@ db.ref('bookings').on('value', (snapshot) => {
 // Real-time Firebase Users Sync across all devices
 db.ref('users').on('value', (snapshot) => {
   const data = snapshot.val();
+  users = [];
+
   if (data) {
-    if (Array.isArray(data)) {
-      users = data.filter(Boolean).map((u, idx) => ({
-        username: u.username || u.key || `user_${idx}`,
-        ...u
-      }));
-    } else {
-      users = Object.keys(data).map(key => ({
-        username: key,
-        name: data[key].name || key,
-        role: data[key].role || 'Teacher',
-        ...data[key]
-      }));
-    }
-  } else {
-    users = [];
+    Object.keys(data).forEach((key) => {
+      const userObj = data[key];
+      if (userObj && typeof userObj === 'object') {
+        users.push({
+          username: userObj.username || key,
+          name: userObj.name || userObj.fullName || key,
+          pass: userObj.pass || '',
+          role: userObj.role || 'Teacher'
+        });
+      }
+    });
   }
 
   // Refresh active currentUser session automatically
   if (currentUser) {
-    const updatedUser = users.find(u => u.username === currentUser.username);
+    const updatedUser = users.find((u) => u.username === currentUser.username);
     if (updatedUser) currentUser = updatedUser;
   }
 
