@@ -702,11 +702,10 @@ if (data) {
             name: userObj.name || userObj.fullName || key,
             pass: userObj.pass || '',
             role: userObj.role || 'Teacher'
-          });
-        }
-      });
+         });
     }
-
+  });
+  
     // Refresh active currentUser session automatically
     if (currentUser) {
       const updatedUser = users.find((u) => u.username === currentUser.username);
