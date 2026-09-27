@@ -693,19 +693,20 @@ db.ref('bookings').on('value', (snapshot) => {
 db.ref('users').on('value', (snapshot) => {
   const data = snapshot.val();
   users = [];
-if (data) {
-      Object.keys(data).forEach((key) => {
-        const userObj = data[key];
-        if (userObj && typeof userObj === 'object') {
-          users.push({
-            username: userObj.username || key,
-            name: userObj.name || userObj.fullName || key,
-            pass: userObj.pass || '',
-            role: userObj.role || 'Teacher'
- });
-    }
-  });
-}
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      const userObj = data[key];
+      if (userObj && typeof userObj === 'object') {
+        users.push({
+          username: userObj.username || key,
+          name: userObj.name || userObj.fullName || key,
+          pass: userObj.pass || '',
+          role: userObj.role || 'Teacher'
+        });
+      }
+
+  }
+
   // Refresh active currentUser session automatically
   if (currentUser) {
     const updatedUser = users.find((u) => u.username === currentUser.username);
@@ -717,15 +718,16 @@ if (data) {
   if (typeof renderGrid === 'function') renderGrid();
 });
 
-  // Real-time Firebase Holidays Sync across all devices
-  db.ref('holidays').on('value', (snapshot) => {
-    const data = snapshot.val();
-    holidays = data ? (Array.isArray(data) ? data.filter(Boolean) : Object.values(data)) : [];
-    if (typeof renderAdminPanel === 'function') renderAdminPanel();
-    if (typeof renderGrid === 'function') renderGrid();
-  });
-
-  if (typeof init === 'function') init();
+// Real-time Firebase Holidays Sync across all devices
+db.ref('holidays').on('value', (snapshot) => {
+  const data = snapshot.val();
+  holidays = data ? (Array.isArray(data) ? data.filter(Boolean) : Object.values(data)) : [];
+  if (typeof renderAdminPanel === 'function') renderAdminPanel();
   if (typeof renderGrid === 'function') renderGrid();
+});
+
+if (typeof init === 'function') init();
+if (typeof renderGrid === 'function') renderGrid();
 </script>
+</body>
 </html>
