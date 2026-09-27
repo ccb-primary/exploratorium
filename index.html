@@ -604,33 +604,14 @@ function deletePeriod(index) {
   db.ref('users/' + u).set(newUser).then(() => {
     alert('Account created successfully!');
 
-    // Clear input fields
     if (fullNameInput) fullNameInput.value = '';
     if (userInput) userInput.value = '';
     if (passInput) passInput.value = '';
 
-    // Refresh Admin Panel UI immediately
     renderAdminPanel();
   }).catch(err => {
     alert('Error creating account: ' + err.message);
   });
-}
-
-  if (confirm(`Are you sure you want to delete account "${username}"?`)) {
-    // 1. Delete user record from Firebase
-    db.ref('users/' + username).remove().catch(err => {
-      alert('Error deleting user: ' + err.message);
-    });
-
-    // 2. Remove any bookings belonging to this user
-    if (typeof bookings === 'object' && bookings !== null) {
-      Object.keys(bookings).forEach(key => {
-        if (bookings[key] && bookings[key].username === username) {
-          db.ref('bookings/' + key).remove();
-        }
-      });
-    }
-  }
 }
 
     function addHoliday(e) {
