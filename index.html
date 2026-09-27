@@ -702,20 +702,20 @@ if (data) {
             name: userObj.name || userObj.fullName || key,
             pass: userObj.pass || '',
             role: userObj.role || 'Teacher'
-         });
+ });
     }
   });
-  
-    // Refresh active currentUser session automatically
-    if (currentUser) {
-      const updatedUser = users.find((u) => u.username === currentUser.username);
-      if (updatedUser) currentUser = updatedUser;
-    }
+}
+  // Refresh active currentUser session automatically
+  if (currentUser) {
+    const updatedUser = users.find((u) => u.username === currentUser.username);
+    if (updatedUser) currentUser = updatedUser;
+  }
 
-    if (typeof renderHeader === 'function') renderHeader();
-    if (typeof renderAdminPanel === 'function') renderAdminPanel();
-    if (typeof renderGrid === 'function') renderGrid();
-  });
+  if (typeof renderHeader === 'function') renderHeader();
+  if (typeof renderAdminPanel === 'function') renderAdminPanel();
+  if (typeof renderGrid === 'function') renderGrid();
+});
 
   // Real-time Firebase Holidays Sync across all devices
   db.ref('holidays').on('value', (snapshot) => {
