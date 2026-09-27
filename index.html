@@ -594,44 +594,63 @@ function addPeriod(e) {
     }
 
     function adminCreateUser(e) {
-      e.preventDefault();
-      const fullName = document.getElementById('adminNewName').value.trim();
-      const u = document.getElementById('adminNewUser').value.trim();
-      const p = document.getElementById('adminNewPass').value.trim();
-      const role = document.getElementById('adminNewRole').value;
+  if (e) e.preventDefault();
+  
+  const fullNameInput = document.getElementById('adminNewName');
+  const userInput = document.getElementById('adminNewUser');
+  const passInput = document.getElementById('adminNewPass');
+  const roleInput = document.getElementById('adminNewRole');
 
-      if (users.find(user => user.username.toLowerCase() === u.toLowerCase())) {
-        return alert('Username already exists. Please choose another.');
-      }
+  const fullName = fullNameInput ? fullNameInput.value.trim() : '';
+  const u = userInput ? userInput.value.trim().toLowerCase() : '';
+  const p = passInput ? passInput.value.trim() : '';
+  const role = roleInput ? roleInput.value : 'Teacher';
 
-      users.push({ name: fullName, username: u, pass: p, role: role });
-      localStorage.setItem('room_users', JSON.stringify(users));
+  if (!fullName || !u || !p) {
+    alert('Please fill in all fields.');
+    return;
+  }
 
-      document.getElementById('adminNewName').value = '';
-      document.getElementById('adminNewUser').value = '';
-      document.getElementById('adminNewPass').value = '';
+  if (users.find(user => user.username.toLowerCase() === u)) {
+    return alert('Username already exists. Please choose another.');
+  }
 
-      alert(`Account for "${fullName}" created successfully as ${role}!`);
-      renderAdminPanel();
-    }
+  // Save directly to Firebase Database under users/username
+  db.ref('users/' + u).set({
+    name: fullName,
+    username: u,
+    pass: p,
+    role: role
+  }).then(() => {
+    alert(`Account for "${fullName}" created successfully as ${role}!`);
+    if (fullNameInput) fullNameInput.value = '';
+    if (userInput) userInput.value = '';
+    if (passInput) passInput.value = '';
+  }).catch((err) => {
+    alert('Error creating account: ' + err.message);
+  });
+}
 
     function deleteUserAccount(index) {
-      const targetUser = users[index];
-      if (confirm(`Are you sure you want to delete the account for "${targetUser.name}"? This will also remove their active bookings.`)) {
-        Object.keys(bookings).forEach(key => {
-          if (bookings[key].username === targetUser.username) {
-            delete bookings[key];
-          }
-        });
-        localStorage.setItem('room_bookings', JSON.stringify(bookings));
+  const targetUser = users[index];
+  if (!targetUser) return;
 
-        users.splice(index, 1);
-        localStorage.setItem('room_users', JSON.stringify(users));
+  if (confirm(`Are you sure you want to delete the account for "${targetUser.name}"? This will also remove their active bookings.`)) {
+    // 1. Remove the user directly from Firebase
+    db.ref('users/' + targetUser.username).remove().catch((err) => {
+      alert('Error deleting user: ' + err.message);
+    });
 
-        renderAdminPanel();
-        renderGrid();
-      }
+    // 2. Remove any bookings belonging to this user directly from Firebase
+    if (typeof bookings === 'object' && bookings !== null) {
+      Object.keys(bookings).forEach((key) => {
+        if (bookings[key] && bookings[key].username === targetUser.username) {
+          db.ref('bookings/' + key).remove();
+        }
+      });
     }
+  }
+}
 
     function addHoliday(e) {
       if (e) e.preventDefault();
