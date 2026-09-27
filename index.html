@@ -519,7 +519,7 @@ function performRegister(e) {
       }
     }
 
-   function renderAdminPanel() {
+  function renderAdminPanel() {
   // Render Periods
   const pList = document.getElementById('periodsList');
   if (pList) {
@@ -570,15 +570,16 @@ function performRegister(e) {
       }).join('');
     }
   }
+}
 
-    function deletePeriod(index) {
-      if (confirm('Are you sure you want to delete this period?')) {
-        periods.splice(index, 1);
-        localStorage.setItem('room_periods', JSON.stringify(periods));
-        renderAdminPanel();
-        renderGrid();
-      }
-    }
+function deletePeriod(index) {
+  if (confirm('Are you sure you want to delete this period?')) {
+    periods.splice(index, 1);
+    localStorage.setItem('room_periods', JSON.stringify(periods));
+    renderAdminPanel();
+    renderGrid();
+  }
+}
 
     function adminCreateUser(e) {
   if (e) e.preventDefault();
