@@ -634,27 +634,51 @@ function addPeriod(e) {
     }
 
     function addHoliday(e) {
-      e.preventDefault();
-      const name = document.getElementById('holName').value.trim();
-      const start = document.getElementById('holStart').value;
-      const end = document.getElementById('holEnd').value;
+      if (e) e.preventDefault();
+      
+      const holNameInput = document.getElementById('holName');
+      const holStartInput = document.getElementById('holStart');
+      const holEndInput = document.getElementById('holEnd');
 
-      holidays.push({ name, start, end });
-      localStorage.setItem('room_holidays', JSON.stringify(holidays));
-      
-      document.getElementById('holName').value = '';
-      document.getElementById('holStart').value = '';
-      document.getElementById('holEnd').value = '';
-      
-      renderAdminPanel();
-      renderGrid();
+      const name = holNameInput ? holNameInput.value.trim() : '';
+      const start = holStartInput ? holStartInput.value : '';
+      const end = holEndInput ? holEndInput.value : '';
+
+      if (!name || !start) {
+        alert('Please enter at least a name and start date for the holiday.');
+        return;
+      }
+
+      // Create a unique database key based on the start date and name
+      const holidayId = (start + '_' + name).replace(/[^a-zA-Z0-9_]/g, '_');
+
+      db.ref('holidays/' + holidayId).set({
+        name: name,
+        start: start,
+        end: end || start
+      }).then(() => {
+        if (holNameInput) holNameInput.value = '';
+        if (holStartInput) holStartInput.value = '';
+        if (holEndInput) holEndInput.value = '';
+      }).catch((err) => {
+        alert('Error adding holiday: ' + err.message);
+      });
     }
 
-    function deleteHoliday(index) {
-      holidays.splice(index, 1);
-      localStorage.setItem('room_holidays', JSON.stringify(holidays));
-      renderAdminPanel();
-      renderGrid();
+    function deleteHoliday(indexOrKey) {
+      let keyToDelete = indexOrKey;
+
+      // Handle array index lookup if passed a number
+      if (typeof indexOrKey === 'number' && holidays[indexOrKey]) {
+        const item = holidays[indexOrKey];
+        keyToDelete = (item.start + '_' + item.name).replace(/[^a-zA-Z0-9_]/g, '_');
+      }
+
+      if (confirm('Are you sure you want to delete this holiday?')) {
+        db.ref('holidays/' + keyToDelete).remove().catch((err) => {
+          alert('Error deleting holiday: ' + err.message);
+        });
+      }
     }
 
    function resetPassword(username) {
