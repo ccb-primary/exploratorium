@@ -599,32 +599,22 @@ function deletePeriod(index) {
     return;
   }
 
-  // Check if username already exists in active users array
-  if (users.some(user => (user.username || '').toLowerCase() === u)) {
-    return alert('Username already exists. Please choose another.');
-  }
+  const newUser = { name: fullName, username: u, pass: p, role: role };
 
-  // Save directly to Firebase under users/username
-  db.ref('users/' + u).set({
-    name: fullName,
-    username: u,
-    pass: p,
-    role: role
-  }).then(() => {
-    alert(`Account for "${fullName}" created successfully as ${role}!`);
+  db.ref('users/' + u).set(newUser).then(() => {
+    alert('Account created successfully!');
+
+    // Clear input fields
     if (fullNameInput) fullNameInput.value = '';
     if (userInput) userInput.value = '';
     if (passInput) passInput.value = '';
-  }).catch((err) => {
+
+    // Refresh Admin Panel UI immediately
+    renderAdminPanel();
+  }).catch(err => {
     alert('Error creating account: ' + err.message);
   });
 }
-
-function deleteUserAccount(username) {
-  if (username === 'admin') {
-    alert('Cannot delete the master admin account.');
-    return;
-  }
 
   if (confirm(`Are you sure you want to delete account "${username}"?`)) {
     // 1. Delete user record from Firebase
