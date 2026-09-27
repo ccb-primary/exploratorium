@@ -583,7 +583,7 @@ function deletePeriod(index) {
 
     function adminCreateUser(e) {
   if (e) e.preventDefault();
-  
+
   const fullNameInput = document.getElementById('adminNewName');
   const userInput = document.getElementById('adminNewUser');
   const passInput = document.getElementById('adminNewPass');
@@ -599,11 +599,12 @@ function deletePeriod(index) {
     return;
   }
 
-  if (users.find(user => user.username.toLowerCase() === u)) {
+  // Check if username already exists in active users array
+  if (users.some(user => (user.username || '').toLowerCase() === u)) {
     return alert('Username already exists. Please choose another.');
   }
 
-  // Save directly to Firebase Database under users/username
+  // Save directly to Firebase under users/username
   db.ref('users/' + u).set({
     name: fullName,
     username: u,
@@ -619,20 +620,22 @@ function deletePeriod(index) {
   });
 }
 
-    function deleteUserAccount(index) {
-  const targetUser = users[index];
-  if (!targetUser) return;
+function deleteUserAccount(username) {
+  if (username === 'admin') {
+    alert('Cannot delete the master admin account.');
+    return;
+  }
 
-  if (confirm(`Are you sure you want to delete the account for "${targetUser.name}"? This will also remove their active bookings.`)) {
-    // 1. Remove the user directly from Firebase
-    db.ref('users/' + targetUser.username).remove().catch((err) => {
+  if (confirm(`Are you sure you want to delete account "${username}"?`)) {
+    // 1. Delete user record from Firebase
+    db.ref('users/' + username).remove().catch(err => {
       alert('Error deleting user: ' + err.message);
     });
 
-    // 2. Remove any bookings belonging to this user directly from Firebase
+    // 2. Remove any bookings belonging to this user
     if (typeof bookings === 'object' && bookings !== null) {
-      Object.keys(bookings).forEach((key) => {
-        if (bookings[key] && bookings[key].username === targetUser.username) {
+      Object.keys(bookings).forEach(key => {
+        if (bookings[key] && bookings[key].username === username) {
           db.ref('bookings/' + key).remove();
         }
       });
