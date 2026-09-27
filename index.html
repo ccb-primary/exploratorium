@@ -546,31 +546,27 @@ function performRegister(e) {
       `).join('');
   }
 
-  // Render Users directly from live memory array
+ // Render Users directly from live memory array
   const ulist = document.getElementById('userList');
   if (ulist) {
     if (!users || users.length === 0) {
-      ulist.innerHTML = '<p class="text-slate-400 italic">No users found.</p>';
+      ulist.innerHTML = '<p class="text-xs text-slate-400 italic p-2">No users found.</p>';
     } else {
-      ulist.innerHTML = users.map((u, index) => {
-        const username = u.username || 'N/A';
-        const name = u.name || username;
-        const role = u.role || 'Teacher';
-
-        return `
-          <div class="flex justify-between items-center bg-white p-2 rounded border">
-            <div>
-              <strong>${name}</strong> <span class="text-slate-500">(@${username})</span>
-              <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-700">${role}</span>
-            </div>
-            <div class="space-x-2">
-              ${username !== 'admin' ? `<button onclick="deleteUserAccount(${index})" class="text-red-500 font-semibold hover:underline">Delete</button>` : ''}
-            </div>
-          </div>`;
-      }).join('');
+      ulist.innerHTML = users.map((u, index) => `
+        <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200">
+          <div>
+            <span class="font-bold text-slate-800">${u.name || u.fullName || u.username}</span>
+            <span class="text-xs text-slate-500 ml-1">(@${u.username})</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded ml-1">${u.role || 'Teacher'}</span>
+          </div>
+          ${u.username !== 'admin' ? `
+            <button onclick="deleteUserAccount('${u.username}')" class="text-xs font-semibold text-red-500 hover:underline">Delete</button>
+          ` : ''}
+        </div>
+      `).join('');
     }
   }
-}
+
 
 function deletePeriod(index) {
   if (confirm('Are you sure you want to delete this period?')) {
