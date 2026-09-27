@@ -750,26 +750,7 @@ db.ref('users').on('value', (snapshot) => {
 
   if (typeof renderHeader === 'function') renderHeader();
   if (typeof renderAdminPanel === 'function') renderAdminPanel();
-});
-  // Real-time Firebase Users Sync across all devices
-db.ref('users').on('value', (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    users = Array.isArray(data)
-      ? data.filter(Boolean)
-      : Object.keys(data).map(key => ({ username: key, ...data[key] }));
-  } else {
-    users = [];
-  }
-
-  // Refresh active currentUser session automatically
-  if (currentUser) {
-    const updatedUser = users.find(u => u.username === currentUser.username);
-    if (updatedUser) currentUser = updatedUser;
-  }
-
-  if (typeof renderHeader === 'function') renderHeader();
-  if (typeof renderAdminPanel === 'function') renderAdminPanel();
+  if (typeof renderGrid === 'function') renderGrid();
 });
 
 // Real-time Firebase Holidays Sync across all devices
