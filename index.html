@@ -510,14 +510,14 @@ function performRegister(e) {
   
 
     function toggleAdminModal() {
-      const modal = document.getElementById('adminModal');
-      if (modal.classList.contains('hidden')) {
-        renderAdminPanel();
-        modal.classList.remove('hidden');
-      } else {
-        modal.classList.add('hidden');
-      }
-    }
+  const modal = document.getElementById('adminModal');
+  if (modal.classList.contains('hidden')) {
+    renderAdminPanel(); // Renders latest users before opening
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+  }
+}
 
   function renderAdminPanel() {
   // Render Periods
