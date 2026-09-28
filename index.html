@@ -43,7 +43,7 @@
   </header>
 
   <!-- Main Controls -->
-  <main class="max-w-7xl mx-auto bg-white rounded-xl shadow-p-6">
+  <main class="max-w-7xl mx-auto bg-white rounded-xl shadow p-6">
     <div class="flex flex-wrap justify-between items-center gap-4 mb-6 pb-4 border-b">
       <div class="flex items-center gap-2">
         <button onclick="changeWeek(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-semibold text-slate-700">‹ Prev Week</button>
@@ -54,7 +54,7 @@
       <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-900 transition">🖨️ Door Display / Print</button>
     </div>
 
-    <!-- Timetable Grid Placeholder -->
+    <!-- Timetable Grid Container -->
     <div id="gridContainer"></div>
   </main>
 
@@ -64,6 +64,7 @@
     let users = [];
     let holidays = [];
     let currentWeekOffset = 0;
+
     // Real-time Firebase Users Sync across all devices
     db.ref('users').on('value', (snapshot) => {
       const data = snapshot.val();
@@ -82,7 +83,6 @@
         });
       }
 
-      // Refresh active currentUser session automatically
       if (currentUser) {
         const updatedUser = users.find((u) => u.username === currentUser.username);
         if (updatedUser) currentUser = updatedUser;
@@ -101,8 +101,6 @@
       if (typeof renderGrid === 'function') renderGrid();
     });
 
-    if (typeof init === 'function') init();
-    if (typeof renderGrid === 'function') renderGrid();
     // Helper & Grid Logic
     function getStartOfWeek(d) {
       const date = new Date(d);
@@ -210,7 +208,7 @@
         });
 
         tableHTML += `</tr>`;
-     
+      });
 
       tableHTML += `</tbody></table></div>`;
       gridContainer.innerHTML = tableHTML;
@@ -220,6 +218,9 @@
       renderHeader();
       renderGrid();
     }
+
+    // Direct initialization call
+    init();
   </script>
 </body>
 </html>
