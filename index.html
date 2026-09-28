@@ -537,14 +537,14 @@
         `).join('');
     }
 
-    // Render Users
+   // Render Users
     const ulist = document.getElementById('userList');
     if (ulist) {
       if (!users || users.length === 0) {
         ulist.innerHTML = '<p class="text-slate-400 italic">No users found.</p>';
       } else {
-        ulist.innerHTML = users.map((u, index) => {
-          const username = u.username || 'N/A';
+        ulist.innerHTML = users.map((u) => {
+          const username = u.username || u.id || 'N/A';
           const name = u.name || username;
           const role = u.role || 'Teacher';
 
@@ -555,11 +555,12 @@
                 <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-700">${role}</span>
               </div>
               <div class="space-x-2">
-                ${username !== 'admin' ? `<button onclick="deleteUserAccount(${index})" class="text-red-500 font-semibold hover:underline">Delete</button>` : ''}
+                ${username !== 'admin' ? `<button onclick="deleteUserAccount('${username}')" class="text-red-500 font-semibold hover:underline">Delete</button>` : ''}
               </div>
             </div>`;
         }).join('');
       }
+    }
     }
   }
 
@@ -605,15 +606,15 @@
     });
   }
 
-  function deleteUserAccount(index) {
-    const targetUser = users[index];
-    if (!targetUser) return;
+  function deleteUserAccount(username) {
+    if (!username) return;
 
-    if (confirm(`Are you sure you want to delete the account for "${targetUser.name}"? This will also remove their active bookings.`)) {
-      db.ref('users/' + targetUser.username).remove().catch((err) => {
+    if (confirm(`Are you sure you want to delete account "${username}"?`)) {
+      db.ref('users/' + username).remove().catch((err) => {
         alert('Error deleting user: ' + err.message);
       });
-
+    }
+  }
       if (typeof bookings === 'object' && bookings !== null) {
         Object.keys(bookings).forEach((key) => {
           if (bookings[key] && bookings[key].username === targetUser.username) {
