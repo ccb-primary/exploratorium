@@ -59,6 +59,11 @@
   </main>
 
   <script>
+    // Global State Variables
+    let currentUser = null;
+    let users = [];
+    let holidays = [];
+    let currentWeekOffset = 0;
     // Real-time Firebase Users Sync across all devices
     db.ref('users').on('value', (snapshot) => {
       const data = snapshot.val();
