@@ -65,7 +65,7 @@
     let holidays = [];
     let currentWeekOffset = 0;
 
-    // Real-time Firebase Users Sync across all devices
+    // Real-time Firebase Users Sync
     db.ref('users').on('value', (snapshot) => {
       const data = snapshot.val();
       users = [];
@@ -93,7 +93,7 @@
       if (typeof renderGrid === 'function') renderGrid();
     });
 
-    // Real-time Firebase Holidays Sync across all devices
+    // Real-time Firebase Holidays Sync
     db.ref('holidays').on('value', (snapshot) => {
       const data = snapshot.val();
       holidays = data ? (Array.isArray(data) ? data.filter(Boolean) : Object.values(data)) : [];
@@ -189,36 +189,36 @@
       tableHTML += `</tr></thead><tbody>`;
 
       periods.forEach((period) => {
-      tableHTML += `<tr class="border-b border-slate-200 hover:bg-slate-50/50">`;
-      tableHTML += `<td class="p-3 font-semibold text-xs border-r border-slate-200 bg-slate-50 text-slate-600">${period}</td>`;
+        tableHTML += `<tr class="border-b border-slate-200 hover:bg-slate-50/50">`;
+        tableHTML += `<td class="p-3 font-semibold text-xs border-r border-slate-200 bg-slate-50 text-slate-600">${period}</td>`;
 
-      days.forEach((day, index) => {
-        const dateObj = new Date(monday);
-        dateObj.setDate(monday.getDate() + index);
-        const dateStr = formatDate(dateObj);
-        const isHoliday = holidays.includes(dateStr);
+        days.forEach((day, index) => {
+          const dateObj = new Date(monday);
+          dateObj.setDate(monday.getDate() + index);
+          const dateStr = formatDate(dateObj);
+          const isHoliday = holidays.includes(dateStr);
 
-        tableHTML += `
-          <td class="p-2 border-r border-slate-200 align-top min-h-[80px] h-20 ${isHoliday ? 'bg-amber-50/50' : ''}">
-            <div class="h-full flex flex-col justify-between p-1 rounded border border-dashed border-slate-200 hover:border-indigo-300 transition cursor-pointer">
-              <span class="text-[11px] text-slate-400 font-medium">+ Book</span>
-            </div>
-          </td>
-        `;
+          tableHTML += `
+            <td class="p-2 border-r border-slate-200 align-top min-h-[80px] h-20 ${isHoliday ? 'bg-amber-50/50' : ''}">
+              <div class="h-full flex flex-col justify-between p-1 rounded border border-dashed border-slate-200 hover:border-indigo-300 transition cursor-pointer">
+                <span class="text-[11px] text-slate-400 font-medium">+ Book</span>
+              </div>
+            </td>
+          `;
+        });
+
+        tableHTML += `</tr>`;
       });
 
-      tableHTML += `</tr>`;
-    });
+      tableHTML += `</tbody></table></div>`;
+      gridContainer.innerHTML = tableHTML;
+    }
 
-    tableHTML += `</tbody></table></div>`;
-    gridContainer.innerHTML = tableHTML;
-      
     function init() {
       renderHeader();
       renderGrid();
     }
 
-    // Direct initialization call
     init();
   </script>
 </body>
