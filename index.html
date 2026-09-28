@@ -103,6 +103,123 @@
 
     if (typeof init === 'function') init();
     if (typeof renderGrid === 'function') renderGrid();
+    // Helper & Grid Logic
+    function getStartOfWeek(d) {
+      const date = new Date(d);
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(date.setDate(diff));
+    }
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    function changeWeek(offset) {
+      currentWeekOffset += offset;
+      renderGrid();
+    }
+
+    function resetWeek() {
+      currentWeekOffset = 0;
+      renderGrid();
+    }
+
+    function renderHeader() {
+      const userInfo = document.getElementById('userInfo');
+      const loginBtn = document.getElementById('loginBtn');
+      const adminPanelBtn = document.getElementById('adminPanelBtn');
+
+      if (currentUser) {
+        if (userInfo) userInfo.textContent = `${currentUser.name} (${currentUser.role})`;
+        if (loginBtn) loginBtn.textContent = 'Logout';
+        if (adminPanelBtn) {
+          if (currentUser.role === 'Admin') {
+            adminPanelBtn.classList.remove('hidden');
+          } else {
+            adminPanelBtn.classList.add('hidden');
+          }
+        }
+      } else {
+        if (userInfo) userInfo.textContent = 'Not logged in';
+        if (loginBtn) loginBtn.textContent = 'Login';
+        if (adminPanelBtn) adminPanelBtn.classList.add('hidden');
+      }
+    }
+
+    function renderGrid() {
+      const gridContainer = document.getElementById('gridContainer');
+      const currentWeekLabel = document.getElementById('currentWeekLabel');
+      if (!gridContainer) return;
+
+      const today = new Date();
+      today.setDate(today.getDate() + (currentWeekOffset * 7));
+      const monday = getStartOfWeek(today);
+
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      const periods = ['Period 1', 'Period 2', 'Period 3', 'Period 4', 'Period 5', 'Period 6'];
+
+      if (currentWeekLabel) {
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 4);
+        currentWeekLabel.textContent = `${monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${sunday.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      }
+
+      let tableHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse border border-slate-200">
+            <thead>
+              <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                <th class="p-3 border-r border-slate-200 text-left w-28">Period</th>
+      `;
+
+      days.forEach((day, index) => {
+        const dateObj = new Date(monday);
+        dateObj.setDate(monday.getDate() + index);
+        const dateStr = formatDate(dateObj);
+        const isHoliday = holidays.includes(dateStr);
+
+        tableHTML += `
+          <th class="p-3 border-r border-slate-200 text-center ${isHoliday ? 'bg-amber-100 text-amber-900' : ''}">
+            <div class="font-bold">${day}</div>
+            <div class="text-xs font-normal text-slate-500">${dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+            ${isHoliday ? '<span class="text-[10px] font-bold uppercase text-amber-700 bg-amber-200 px-1.5 py-0.5 rounded mt-1 inline-block">Holiday</span>' : ''}
+          </th>
+        `;
+      });
+
+      tableHTML += `</tr></thead><tbody>`;
+
+      periods.forEach((period) => {
+        tableHTML += `<tr class="border-b border-slate-200 hover:bg-slate-50/50">`;
+        tableHTML += `<td class="p-3 font-semibold text-xs border-r border-slate-200 bg-slate-50 text-slate-600">${period}</td>`;
+
+        days.forEach((day, index) => {
+          const dateObj = new Date(monday);
+          dateObj.setDate(monday.getDate() + index);
+          const dateStr = formatDate(dateObj);
+          const isHoliday = holidays.includes(dateStr);
+
+          tableHTML += `
+            <td class="p-2 border-r border-slate-200 align-top min-h-[80px] h-20 ${isHoliday ? 'bg-amber-50/50' : ''}">
+              <div class="h-full flex flex-col justify-between p-1 rounded border border-dashed border-slate-200 hover:border-indigo-300 transition cursor-pointer">
+                <span class="text-[11px] text-slate-400 font-medium">+ Book</span>
+              </div>
+            </td>
+          `;
+        });
+
+        tableHTML += `</tr>`;
+     
+
+      tableHTML += `</tbody></table></div>`;
+      gridContainer.innerHTML = tableHTML;
+    }
+
+    function init() {
+      renderHeader();
+      renderGrid();
+    }
   </script>
 </body>
 </html>
