@@ -6,38 +6,38 @@
   <title>The Exploratorium: Booking System CCB Primary</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen p-4 font-sans">
+<body class="bg-slate-100 text-slate-800 min-h-screen p-6 font-sans">
 
   <!-- Header -->
-  <header class="max-w-7xl mx-auto bg-indigo-900 text-white p-4 rounded-xl shadow-lg mb-6 flex justify-between items-center">
+  <header class="w-full bg-indigo-900 text-white p-5 rounded-xl shadow-lg mb-6 flex justify-between items-center">
     <div>
-      <h1 class="text-2xl font-bold">The Exploratorium: Booking System CCB Primary</h1>
-      <p class="text-xs text-indigo-200">Cloud Connected • Dynamic Timetable & Admin Controls</p>
+      <h1 class="text-3xl font-bold tracking-tight">The Exploratorium: Booking System CCB Primary</h1>
+      <p class="text-sm text-indigo-200 mt-1">Cloud Connected • Dynamic Timetable & Admin Controls</p>
     </div>
-    <div class="flex items-center gap-3">
-      <span id="userInfo" class="text-sm font-medium bg-indigo-800 px-3 py-1 rounded-lg">Not logged in</span>
-      <button id="adminPanelBtn" onclick="toggleAdminModal()" class="hidden bg-amber-500 hover:bg-amber-600 px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-900 transition">⚙️ Admin Panel</button>
-      <button id="loginBtn" onclick="handleAuthAction()" class="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg text-sm font-semibold transition">Login</button>
+    <div class="flex items-center gap-4">
+      <span id="userInfo" class="text-base font-medium bg-indigo-800 px-4 py-2 rounded-lg">Not logged in</span>
+      <button id="adminPanelBtn" onclick="toggleAdminModal()" class="hidden bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded-lg text-base font-semibold text-slate-900 transition shadow">⚙️ Admin Panel</button>
+      <button id="loginBtn" onclick="handleAuthAction()" class="bg-indigo-500 hover:bg-indigo-600 px-5 py-2.5 rounded-lg text-base font-semibold transition shadow">Login</button>
     </div>
   </header>
 
   <!-- Main Controls -->
-  <main class="max-w-7xl mx-auto bg-white rounded-xl shadow p-6">
+  <main class="w-full bg-white rounded-xl shadow-md p-6">
     <div class="flex flex-wrap justify-between items-center gap-4 mb-6 pb-4 border-b">
-      <div class="flex items-center gap-2">
-        <button onclick="changeWeek(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-semibold text-slate-700">‹ Prev Week</button>
-        <button onclick="resetWeek()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-sm font-semibold">Current Week</button>
-        <button onclick="changeWeek(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-semibold text-slate-700">Next Week ›</button>
-        <span id="currentWeekLabel" class="ml-2 px-3 py-1.5 bg-slate-100 text-slate-800 rounded-lg text-sm font-bold border border-slate-200"></span>
+      <div class="flex items-center gap-3">
+        <button onclick="changeWeek(-1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-base font-semibold text-slate-700 transition">‹ Prev Week</button>
+        <button onclick="resetWeek()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-base font-semibold transition">Current Week</button>
+        <button onclick="changeWeek(1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-base font-semibold text-slate-700 transition">Next Week ›</button>
+        <span id="currentWeekLabel" class="ml-3 px-4 py-2 bg-slate-100 text-slate-900 rounded-lg text-base font-bold border border-slate-200"></span>
       </div>
-      <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-900 transition">🖨️ Door Display / Print</button>
+      <button onclick="window.print()" class="bg-slate-800 text-white px-5 py-2.5 rounded-lg text-base font-semibold hover:bg-slate-900 transition shadow">🖨️ Door Display / Print</button>
     </div>
 
     <!-- Timetable Grid -->
     <div class="overflow-x-auto">
-      <table class="w-full border-collapse text-center text-sm">
+      <table class="w-full border-collapse text-center text-base">
         <thead>
-          <tr id="gridHeader" class="bg-slate-50 border-b"></tr>
+          <tr id="gridHeader" class="bg-slate-100 border-b"></tr>
         </thead>
         <tbody id="gridBody" class="divide-y divide-slate-200"></tbody>
       </table>
@@ -47,29 +47,29 @@
   <!-- Booking Modal -->
   <div id="bookingModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40">
     <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
-      <h3 id="modalTitle" class="text-lg font-bold mb-2">Book Slot</h3>
-      <p id="modalSlotDetails" class="text-sm text-slate-500 mb-4"></p>
+      <h3 id="modalTitle" class="text-xl font-bold mb-2">Book Slot</h3>
+      <p id="modalSlotDetails" class="text-base text-slate-500 mb-4"></p>
       
       <form id="bookingForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Teacher Name</label>
-          <input type="text" id="userNameInput" required readonly class="w-full border bg-slate-50 rounded p-2 text-sm text-slate-600 outline-none">
+          <input type="text" id="userNameInput" required readonly class="w-full border bg-slate-50 rounded p-2.5 text-base text-slate-600 outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Purpose / Class Details</label>
-          <textarea id="userPurposeInput" placeholder="e.g. Year 10 Physics - Optics experiment with light kits" required rows="3" class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+          <textarea id="userPurposeInput" placeholder="e.g. Year 10 Physics - Optics experiment with light kits" required rows="3" class="w-full border rounded p-2.5 text-base focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
         </div>
 
         <div id="adminRecurringOption" class="hidden bg-amber-50 border border-amber-200 p-3 rounded-lg">
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" id="recurringCheckbox" class="rounded text-amber-600 focus:ring-amber-500">
+            <input type="checkbox" id="recurringCheckbox" class="rounded text-amber-600 focus:ring-amber-500 h-4 w-4">
             <span class="text-xs font-semibold text-amber-900">Repeat weekly for rest of school year</span>
           </label>
         </div>
 
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded">Cancel</button>
-          <button type="submit" class="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded hover:bg-indigo-700">Save Booking</button>
+          <button type="button" onclick="closeModal()" class="px-4 py-2 text-base font-semibold text-slate-600 hover:bg-slate-100 rounded">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-base font-semibold bg-indigo-600 text-white rounded hover:bg-indigo-700 shadow">Save Booking</button>
         </div>
       </form>
     </div>
@@ -79,41 +79,41 @@
   <div id="loginModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40">
     <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl">
       <div class="flex justify-between border-b pb-2 mb-4">
-        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="font-bold text-indigo-600 border-b-2 border-indigo-600 pb-1 text-sm">Login</button>
-        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="font-bold text-slate-400 hover:text-slate-600 pb-1 text-sm">Register (Teacher)</button>
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="font-bold text-indigo-600 border-b-2 border-indigo-600 pb-1 text-base">Login</button>
+        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="font-bold text-slate-400 hover:text-slate-600 pb-1 text-base">Register (Teacher)</button>
       </div>
 
-      <form id="loginForm" onsubmit="performLogin(event)" class="space-y-3">
+      <form id="loginForm" onsubmit="performLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Username</label>
-          <input type="text" id="loginUsername" required placeholder="Username" class="w-full border rounded p-2 text-sm">
+          <input type="text" id="loginUsername" required placeholder="Username" class="w-full border rounded p-2.5 text-base">
         </div>
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
-          <input type="password" id="loginPassword" required class="w-full border rounded p-2 text-sm">
+          <input type="password" id="loginPassword" required class="w-full border rounded p-2.5 text-base">
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeAuthModal()" class="px-4 py-2 text-sm text-slate-600">Cancel</button>
-          <button type="submit" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700">Log In</button>
+          <button type="button" onclick="closeAuthModal()" class="px-4 py-2 text-base text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-base bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700 shadow">Log In</button>
         </div>
       </form>
 
-      <form id="registerForm" onsubmit="performRegister(event)" class="hidden space-y-3">
+      <form id="registerForm" onsubmit="performRegister(event)" class="hidden space-y-4">
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Full Name</label>
-          <input type="text" id="regFullName" required placeholder="e.g. Sarah Connor" class="w-full border rounded p-2 text-sm">
+          <input type="text" id="regFullName" required placeholder="e.g. Sarah Connor" class="w-full border rounded p-2.5 text-base">
         </div>
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Username</label>
-          <input type="text" id="regUsername" required placeholder="e.g. s.connor" class="w-full border rounded p-2 text-sm">
+          <input type="text" id="regUsername" required placeholder="e.g. s.connor" class="w-full border rounded p-2.5 text-base">
         </div>
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
-          <input type="password" id="regPassword" required class="w-full border rounded p-2 text-sm">
+          <input type="password" id="regPassword" required class="w-full border rounded p-2.5 text-base">
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeAuthModal()" class="px-4 py-2 text-sm text-slate-600">Cancel</button>
-          <button type="submit" class="px-4 py-2 text-sm bg-green-600 text-white rounded font-semibold hover:bg-green-700">Create Account</button>
+          <button type="button" onclick="closeAuthModal()" class="px-4 py-2 text-base text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-base bg-green-600 text-white rounded font-semibold hover:bg-green-700 shadow">Create Account</button>
         </div>
       </form>
     </div>
@@ -308,18 +308,22 @@
     const monday = getMondayOfWeek(currentWeekOffset);
     const mondayIso = formatDateISO(monday);
 
-    headerRow.innerHTML = '<th class="p-3 border bg-slate-100 font-bold">Day</th>' + 
-      periods.map(p => `<th class="p-2 border font-semibold"><div>${p.name}</div><div class="text-xs text-slate-400 font-normal">${p.start}-${p.end}</div></th>`).join('');
+    headerRow.innerHTML = '<th class="p-4 border bg-slate-100 font-bold text-left text-base">Day</th>' + 
+      periods.map(p => `<th class="p-3 border font-semibold min-w-[110px]"><div>${p.name}</div><div class="text-xs text-slate-500 font-normal">${p.start}-${p.end}</div></th>`).join('');
 
     body.innerHTML = DAYS.map((day, dayIndex) => {
       const slotDate = getDateForDay(currentWeekOffset, dayIndex);
+      const formattedDayDate = slotDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const holiday = isHoliday(slotDate);
 
       if (holiday) {
         return `
           <tr>
-            <td class="p-3 border font-bold bg-amber-50 text-left">${day}</td>
-            <td colspan="${periods.length}" class="p-3 border bg-amber-100/70 text-amber-900 font-bold text-center">
+            <td class="p-4 border font-bold bg-amber-50 text-left min-w-[130px]">
+              <div class="text-base text-slate-900">${day}</div>
+              <div class="text-xs text-amber-800 font-medium mt-0.5">${formattedDayDate}</div>
+            </td>
+            <td colspan="${periods.length}" class="p-4 border bg-amber-100/70 text-amber-900 font-bold text-center text-base">
               ${holiday.name}
             </td>
           </tr>`;
@@ -327,7 +331,7 @@
 
       const cells = periods.map(period => {
         if (period.day !== 'All' && period.day !== day) {
-          return `<td class="p-2 border bg-slate-100 text-slate-300 text-xs">N/A</td>`;
+          return `<td class="p-3 border bg-slate-100 text-slate-400 text-xs">N/A</td>`;
         }
         
         const slotKey = `${mondayIso}_${day}_${period.id}`;
@@ -336,20 +340,27 @@
         if (booking) {
           const canDelete = currentUser && (currentUser.role === 'Admin' || currentUser.username === booking.username);
           return `
-            <td class="p-2 border bg-indigo-50 hover:bg-indigo-100 transition">
-              <div class="font-bold text-indigo-900 text-xs">${booking.name}</div>
-              <div class="text-xs text-indigo-700 truncate max-w-[120px]" title="${booking.purpose}">${booking.purpose}</div>
-              ${canDelete ? `<button onclick="deleteBooking('${slotKey}')" class="text-xs text-red-500 hover:text-red-700 mt-1 block mx-auto font-semibold">✕ Delete</button>` : ''}
+            <td class="p-3 border bg-indigo-50 hover:bg-indigo-100 transition min-h-[70px]">
+              <div class="font-bold text-indigo-950 text-sm">${booking.name}</div>
+              <div class="text-xs text-indigo-800 truncate max-w-[150px] mx-auto mt-0.5" title="${booking.purpose}">${booking.purpose}</div>
+              ${canDelete ? `<button onclick="deleteBooking('${slotKey}')" class="text-xs text-red-600 hover:text-red-800 mt-1 block mx-auto font-bold">✕ Delete</button>` : ''}
             </td>`;
         }
 
         return `
-          <td class="p-2 border hover:bg-green-50 cursor-pointer transition" onclick="openBookingModal('${day}', '${period.id}')">
-            <span class="text-xs text-green-600 font-semibold">+ Book</span>
+          <td class="p-3 border hover:bg-green-50 cursor-pointer transition min-h-[70px]" onclick="openBookingModal('${day}', '${period.id}')">
+            <span class="text-xs text-green-700 font-bold">+ Book</span>
           </td>`;
       }).join('');
 
-      return `<tr><td class="p-3 border font-bold bg-slate-50 text-left">${day}</td>${cells}</tr>`;
+      return `
+        <tr>
+          <td class="p-4 border font-bold bg-slate-50 text-left min-w-[130px]">
+            <div class="text-base text-slate-900">${day}</div>
+            <div class="text-xs text-slate-500 font-normal mt-0.5">${formattedDayDate}</div>
+          </td>
+          ${cells}
+        </tr>`;
     }).join('');
   }
 
@@ -444,13 +455,13 @@
     if (tab === 'login') {
       document.getElementById('loginForm').classList.remove('hidden');
       document.getElementById('registerForm').classList.add('hidden');
-      document.getElementById('tabLoginBtn').className = 'font-bold text-indigo-600 border-b-2 border-indigo-600 pb-1 text-sm';
-      document.getElementById('tabRegisterBtn').className = 'font-bold text-slate-400 hover:text-slate-600 pb-1 text-sm';
+      document.getElementById('tabLoginBtn').className = 'font-bold text-indigo-600 border-b-2 border-indigo-600 pb-1 text-base';
+      document.getElementById('tabRegisterBtn').className = 'font-bold text-slate-400 hover:text-slate-600 pb-1 text-base';
     } else {
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.remove('hidden');
-      document.getElementById('tabRegisterBtn').className = 'font-bold text-indigo-600 border-b-2 border-indigo-600 pb-1 text-sm';
-      document.getElementById('tabLoginBtn').className = 'font-bold text-slate-400 hover:text-slate-600 pb-1 text-sm';
+      document.getElementById('tabRegisterBtn').className = 'font-bold text-indigo-600 border-b-2 border-indigo-600 pb-1 text-base';
+      document.getElementById('tabLoginBtn').className = 'font-bold text-slate-400 hover:text-slate-600 pb-1 text-base';
     }
   }
 
