@@ -160,7 +160,7 @@
             </select>
             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-semibold p-1.5 col-span-2">+ Add</button>
           </form>
-          <div id="periodsList" class="space-y-1.5 text-xs max-h-48 overflow-y-auto"></div>
+          <div id="periodList" class="space-y-1.5 text-xs max-h-48 overflow-y-auto"></div>
         </div>
 
         <!-- School Holidays / Blackout Days -->
@@ -234,6 +234,13 @@
   let adminSettings = JSON.parse(localStorage.getItem('room_admin_settings') || '{"termStart":"2026-08-15","termEnd":"2027-06-15"}');
   let users = [];
 
+  function formatDateISO(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
   function getMondayOfWeek(offset) {
     const now = new Date();
     const currentDay = now.getDay();
@@ -260,7 +267,7 @@
   }
 
   function isHoliday(date) {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = formatDateISO(date);
     return holidays.find(h => dateStr >= h.start && dateStr <= h.end);
   }
 
@@ -298,6 +305,9 @@
     const headerRow = document.getElementById('gridHeader');
     const body = document.getElementById('gridBody');
 
+    const monday = getMondayOfWeek(currentWeekOffset);
+    const mondayIso = formatDateISO(monday);
+
     headerRow.innerHTML = '<th class="p-3 border bg-slate-100 font-bold">Day</th>' + 
       periods.map(p => `<th class="p-2 border font-semibold"><div>${p.name}</div><div class="text-xs text-slate-400 font-normal">${p.start}-${p.end}</div></th>`).join('');
 
@@ -319,7 +329,8 @@
         if (period.day !== 'All' && period.day !== day) {
           return `<td class="p-2 border bg-slate-100 text-slate-300 text-xs">N/A</td>`;
         }
-        const slotKey = `w${currentWeekOffset}_${day}_${period.id}`;
+        
+        const slotKey = `${mondayIso}_${day}_${period.id}`;
         const booking = bookings[slotKey];
 
         if (booking) {
@@ -379,13 +390,17 @@
     
     if (isRecurring) {
       for (let i = currentWeekOffset; i <= currentWeekOffset + 30; i++) {
-        const key = `w${i}_${selectedSlot.day}_${selectedSlot.periodId}`;
+        const targetMonday = getMondayOfWeek(i);
+        const targetMondayIso = formatDateISO(targetMonday);
+        const key = `${targetMondayIso}_${selectedSlot.day}_${selectedSlot.periodId}`;
         if (!bookings[key]) {
           db.ref('bookings/' + key).set({ name: currentUser.name, username: currentUser.username, purpose: purpose });
         }
       }
     } else {
-      const slotKey = `w${currentWeekOffset}_${selectedSlot.day}_${selectedSlot.periodId}`;
+      const monday = getMondayOfWeek(currentWeekOffset);
+      const mondayIso = formatDateISO(monday);
+      const slotKey = `${mondayIso}_${selectedSlot.day}_${selectedSlot.periodId}`;
       db.ref('bookings/' + slotKey).set({ name: currentUser.name, username: currentUser.username, purpose: purpose });
     }
 
@@ -511,7 +526,6 @@
   }
 
   function renderAdminPanel() {
-    // Render Periods
     const plist = document.getElementById('periodList');
     if (plist) {
       plist.innerHTML = periods.map((p, index) => `
@@ -525,7 +539,6 @@
       `).join('');
     }
 
-    // Render Holidays
     const hlist = document.getElementById('holidayList');
     if (hlist) {
       hlist.innerHTML = holidays.length === 0 ? '<p class="text-slate-400 italic">No blackout days configured.</p>' :
@@ -537,7 +550,6 @@
         `).join('');
     }
 
-    // Render Users
     const ulist = document.getElementById('userList');
     if (ulist) {
       if (!users || users.length === 0) {
